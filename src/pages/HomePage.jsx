@@ -11,7 +11,7 @@ export default function HomePage() {
     itemName: "",
   });
   const [message, setMessage] = useState(null);
-  const [loading, setLoading] = useState(false); // NEW
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchReports();
@@ -20,7 +20,7 @@ export default function HomePage() {
   const fetchReports = async () => {
     try {
       const res = await axios.get("/api/lost-reports");
-      setReports(res.data);
+      setReports(res.data); // res.data should be an array
     } catch (err) {
       console.error(err);
     }
@@ -29,7 +29,7 @@ export default function HomePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage(null);
-    setLoading(true); // NEW
+    setLoading(true);
 
     try {
       const res = await axios.post("/api/lost-reports", form);
@@ -46,7 +46,7 @@ export default function HomePage() {
       console.error(err);
       setMessage("Submission failed.");
     } finally {
-      setLoading(false); // NEW
+      setLoading(false);
     }
   };
 
@@ -62,7 +62,7 @@ export default function HomePage() {
             value={form.taxiId}
             onChange={(e) => setForm({ ...form, taxiId: e.target.value })}
             required
-            disabled={loading} // NEW
+            disabled={loading}
           />
           <input
             className="input"
@@ -73,7 +73,6 @@ export default function HomePage() {
             required
             disabled={loading}
           />
-
           <input
             className="input"
             type="text"
@@ -106,9 +105,11 @@ export default function HomePage() {
       <section>
         <h2 className="section-title">Latest Lost Reports</h2>
         <div className="home-grid">
-          {reports.map((report) => (
-            <LostReportCard key={report._id} report={report} />
-          ))}
+          {Array.isArray(reports)
+            ? reports.map((report) => (
+                <LostReportCard key={report._id} report={report} />
+              ))
+            : null}
         </div>
       </section>
     </div>
