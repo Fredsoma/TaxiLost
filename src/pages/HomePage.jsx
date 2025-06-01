@@ -3,6 +3,8 @@ import axios from "axios";
 import LostReportCard from "../components/LostReportCard";
 
 export default function HomePage() {
+  const API = process.env.REACT_APP_API_URL; // e.g. "https://taxilost-backend.onrender.com"
+
   const [reports, setReports] = useState([]);
   const [form, setForm] = useState({
     taxiId: "",
@@ -19,7 +21,7 @@ export default function HomePage() {
 
   const fetchReports = async () => {
     try {
-      const res = await axios.get("/api/lost-reports");
+      const res = await axios.get(`${API}/api/lost-reports`);
       setReports(res.data); // res.data should be an array
     } catch (err) {
       console.error(err);
@@ -32,7 +34,7 @@ export default function HomePage() {
     setLoading(true);
 
     try {
-      const res = await axios.post("/api/lost-reports", form);
+      const res = await axios.post(`${API}/api/lost-reports`, form);
       setMessage(
         `Submission successful! Matched driver: ${
           res.data.matchedDriver

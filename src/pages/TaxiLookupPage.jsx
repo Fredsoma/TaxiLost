@@ -5,6 +5,8 @@ import axios from 'axios';
 import QRScanner from '../components/QRScanner';
 
 export default function TaxiLookupPage() {
+  const API = process.env.REACT_APP_API_URL; // e.g. "https://taxilost-backend.onrender.com"
+
   const [taxiId, setTaxiId] = useState('');
   const [driverInfo, setDriverInfo] = useState(null);
   const [message, setMessage] = useState(null);
@@ -17,9 +19,9 @@ export default function TaxiLookupPage() {
     setDriverInfo(null);
 
     try {
-      // Call the new public endpoint: /api/taxi/:taxiId
+      // Call the public endpoint on the deployed backend
       const res = await axios.get(
-        `/api/taxi/${encodeURIComponent(taxiId.trim())}`
+        `${API}/api/taxi/${encodeURIComponent(taxiId.trim())}`
       );
       setDriverInfo(res.data);
     } catch (err) {

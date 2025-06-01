@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 export default function RegisterTaxiPage() {
+  const API = process.env.REACT_APP_API_URL; // e.g. "https://taxilost-backend.onrender.com"
+
   const [form, setForm] = useState({ driverName: '', phone: '', carPlate: '' });
   const [taxiId, setTaxiId] = useState(null);
   const [message, setMessage] = useState(null);
@@ -13,7 +15,7 @@ export default function RegisterTaxiPage() {
     setMessage(null);
 
     try {
-      const res = await axios.post('/api/register-taxi', form);
+      const res = await axios.post(`${API}/api/register-taxi`, form);
       setTaxiId(res.data.taxiId);
       setMessage('Taxi registered successfully!');
       setForm({ driverName: '', phone: '', carPlate: '' });
