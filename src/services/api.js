@@ -9,7 +9,7 @@ export const loginUser = async ({ email, password, role }) => {
   const data = await response.json();
 
   if (!response.ok) {
-   
+    // Normalize any error payload into an array of messages
     const errs = Array.isArray(data.errors)
       ? data.errors
       : data.error
@@ -17,10 +17,10 @@ export const loginUser = async ({ email, password, role }) => {
       : data.message
       ? [data.message]
       : ['Login failed'];
-    throw errs;  
+    throw errs;   // throws string[]
   }
 
-  return data;  
+  return data;   // { token, role, … }
 };
 
 export const registerUser = async (userData) => {
@@ -37,8 +37,8 @@ export const registerUser = async (userData) => {
       : data.error
       ? [data.error]
       : ['Registration failed'];
-    throw errs;  
+    throw errs;   // throws string[]
   }
 
-  return data;   
+  return data;   // { token, role, taxiId, … }
 };
