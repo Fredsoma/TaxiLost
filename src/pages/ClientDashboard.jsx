@@ -19,42 +19,39 @@ const ClientDashboard = () => {
   }, []);
 
   const fetchProfile = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(`${API_URL}/client/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setClient(res.data);
-  };
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${API_URL}/api/client/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  setClient(res.data);
+};
 
   const fetchReports = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get(`${API_URL}/client/lost-reports`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    // normalize to array
-    setLostReports(Array.isArray(res.data) ? res.data : []);
-  };
-
+  const token = localStorage.getItem("token");
+  const res = await axios.get(`${API_URL}/api/client/lost-reports`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  setLostReports(Array.isArray(res.data) ? res.data : []);
+};
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!description.trim()) return alert("Description is required.");
+  e.preventDefault();
+  if (!description.trim()) return alert("Description is required.");
 
-    try {
-      const token = localStorage.getItem("token");
-      await axios.post(
-        `${API_URL}/client/lost-report`,
-        { description, taxiId },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setMessage("Lost report submitted successfully.");
-      setDescription("");
-      setTaxiId("");
-      fetchReports();
-    } catch (err) {
-      setMessage("Failed to submit report.");
-    }
-  };
-
+  try {
+    const token = localStorage.getItem("token");
+    await axios.post(
+      `${API_URL}/api/client/lost-report`,
+      { description, taxiId },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setMessage("Lost report submitted successfully.");
+    setDescription("");
+    setTaxiId("");
+    fetchReports();
+  } catch (err) {
+    setMessage("Failed to submit report.");
+  }
+};
   return (
     <div className="client-dashboard">
       <h1>👤 Client Dashboard</h1>

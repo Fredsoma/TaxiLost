@@ -19,7 +19,7 @@ const UpdateProfile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get(`${API_URL}/taxidriver/me`, {
+        const res = await axios.get(`${API_URL}/api/taxidriver/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData(res.data);
@@ -39,7 +39,7 @@ const UpdateProfile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`${API_URL}/taxidriver/update`, formData, {
+      await axios.put(`${API_URL}/api/taxidriver/update`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('✅ Profile updated!');

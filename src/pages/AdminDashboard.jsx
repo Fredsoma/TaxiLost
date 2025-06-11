@@ -36,7 +36,7 @@ const AdminDashboard = () => {
   const fetchFoundReports = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/admin/found-reports`, {
+      const res = await axios.get(`${API_URL}/api/admin/found-reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReports(Array.isArray(res.data) ? res.data : []);
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
   const fetchLostReports = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/admin/lost-reports`, {
+      const res = await axios.get(`${API_URL}/api/admin/lost-reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setLostReports(Array.isArray(res.data) ? res.data : []);
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
   const fetchBannedDrivers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/admin/banned-drivers`, {
+      const res = await axios.get(`${API_URL}/api/admin/banned-drivers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBannedDrivers(Array.isArray(res.data) ? res.data : []);
@@ -85,7 +85,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `${API_URL}/admin/ban-driver/${taxiIdToBan}`,
+        `${API_URL}/api/admin/ban-driver/${taxiIdToBan}`,
         { reason: banReason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -104,7 +104,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `${API_URL}/admin/unban-driver/${taxiId}`,
+        `${API_URL}/api/admin/unban-driver/${taxiId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -119,7 +119,7 @@ const AdminDashboard = () => {
     try {
       setDriverError("");
       const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/admin/driver/${taxiIdInput}`, {
+      const res = await axios.get(`${API_URL}/api/admin/driver/${taxiIdInput}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDriverInfo(res.data);
@@ -134,7 +134,7 @@ const AdminDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
-        `${API_URL}/admin/update-report-status/${reportId}`,
+        `${API_URL}/api/admin/update-report-status/${reportId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

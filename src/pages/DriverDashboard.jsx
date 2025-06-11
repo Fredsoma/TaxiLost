@@ -14,9 +14,10 @@ const DriverDashboard = () => {
   useEffect(() => {
     const fetchDriver = async () => {
       const token = localStorage.getItem('token');
-      const res = await axios.get(`${API_URL}/taxidriver/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(`${API_URL}/api/taxidriver/me`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
+
       setDriver({
         ...res.data,
         foundItems: Array.isArray(res.data.foundItems) ? res.data.foundItems : [],
@@ -29,16 +30,16 @@ const DriverDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(
-        `${API_URL}/taxidriver/report-found-item`,     // ← point at the real backend
-        { description: foundItem },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+    const res = await axios.post(
+  `${API_URL}/api/taxidriver/report-found-item`,
+  { description: foundItem },
+  { headers: { Authorization: `Bearer ${token}` } }
+);
       setSubmittedReport(res.data);
 
-      const updated = await axios.get(`${API_URL}/taxidriver/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const updated = await axios.get(`${API_URL}/api/taxidriver/me`, {
+  headers: { Authorization: `Bearer ${token}` },
+});
       setDriver({
         ...updated.data,
         foundItems: Array.isArray(updated.data.foundItems) ? updated.data.foundItems : [],
