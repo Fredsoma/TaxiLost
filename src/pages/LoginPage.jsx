@@ -1,29 +1,30 @@
-import React, { useState, useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+// LoginPage.jsx
+import React, { useState, useContext } from 'react'; 
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../services/api';
 import './login.css';
 import taxilost from '../assets/taxi-logo.png';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../context/AuthContext'; 
 
 const LoginPage = () => {
   const [role, setRole] = useState('client');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState([]);
+  const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login } = useContext(AuthContext); 
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError([]);
+    setError('');
 
     try {
       const data = await loginUser({ email, password, role });
 
       if (!data.token) {
-        setError([data.error || 'Login failed']);
+        setError(data.error || 'Login failed');
         setIsLoading(false);
         return;
       }
@@ -37,14 +38,11 @@ const LoginPage = () => {
       } else if (data.role === 'admin') {
         navigate('/admin-dashboard');
       } else {
-        setError(['Unknown role. Please contact support.']);
+        setError('Unknown role. Please contact support.');
       }
     } catch (err) {
       console.error('Login error:', err);
-      const messages = Array.isArray(err)
-        ? err
-        : [err?.message || err?.toString() || 'Login failed'];
-      setError(messages);
+      setError(err.message || 'Login failed');
     } finally {
       setIsLoading(false);
     }
@@ -97,7 +95,7 @@ const LoginPage = () => {
             value={email}
             onChange={(e) => {
               setEmail(e.target.value);
-              setError([]);
+              setError('');
             }}
             required
             className="login-input"
@@ -108,17 +106,13 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
-              setError([]);
+              setError('');
             }}
             required
             className="login-input"
           />
 
-          {(Array.isArray(error) ? error : [error])
-            .filter(Boolean)
-            .map((msg, i) => (
-              <p key={i} className="login-error">{msg}</p>
-            ))}
+          {error && <p className="login-error">{error}</p>}
 
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading
@@ -129,9 +123,9 @@ const LoginPage = () => {
 
         <p className="login-footer">
           Don’t have an account?{' '}
-          <Link to="/register" className="login-link">
+          <a href="/register" className="login-link">
             Register here
-          </Link>
+          </a>
         </p>
       </div>
     </div>

@@ -1,3 +1,4 @@
+// ClientDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import QRScanner from "../components/QRScanner";
@@ -9,7 +10,7 @@ const ClientDashboard = () => {
   const [description, setDescription] = useState("");
   const [taxiId, setTaxiId] = useState("");
   const [message, setMessage] = useState("");
-  const [scanning, setScanning] = useState(false); 
+  const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -29,7 +30,8 @@ const ClientDashboard = () => {
     const res = await axios.get("/api/client/lost-reports", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    setLostReports(res.data);
+    // normalize to array
+    setLostReports(Array.isArray(res.data) ? res.data : []);
   };
 
   const handleSubmit = async (e) => {
@@ -80,7 +82,6 @@ const ClientDashboard = () => {
             onChange={(e) => setTaxiId(e.target.value)}
           />
 
-          {/* Button to toggle scanner */}
           <button
             type="button"
             onClick={() => setScanning((prev) => !prev)}
@@ -88,13 +89,16 @@ const ClientDashboard = () => {
             {scanning ? "Stop Scanner" : "Start Scanner"}
           </button>
 
-          {/* Only render scanner if scanning is true */}
-          {scanning && <QRScanner onScan={(value) => {
-            setTaxiId(value);
-            setScanning(false); // stop scanning once value captured
-          }} />}
+          {scanning && (
+            <QRScanner
+              onScan={(value) => {
+                setTaxiId(value);
+                setScanning(false);
+              }}
+            />
+          )}
 
-          <button cltype="submit" className="position">Submit Report</button>
+          <button type="submit" className="position">Submit Report</button>
         </form>
         {message && <p className="message">{message}</p>}
       </div>

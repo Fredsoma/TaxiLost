@@ -7,7 +7,7 @@ const AdminDashboard = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  //  lost reports states
+  // Lost reports states
   const [lostReports, setLostReports] = useState([]);
   const [lostReportsLoading, setLostReportsLoading] = useState(true);
 
@@ -38,7 +38,8 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/found-reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setReports(res.data);
+      // normalize to array
+      setReports(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading found reports", err);
     } finally {
@@ -52,7 +53,8 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/lost-reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setLostReports(res.data);
+      // normalize to array
+      setLostReports(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading lost reports", err);
     } finally {
@@ -66,7 +68,8 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/banned-drivers", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setBannedDrivers(res.data);
+      // normalize to array
+      setBannedDrivers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch banned drivers", err);
     }
@@ -103,7 +106,6 @@ const AdminDashboard = () => {
   // Unban driver request
   const handleUnbanDriver = async (taxiId) => {
     if (!window.confirm(`Unban driver ${taxiId}?`)) return;
-
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
@@ -143,7 +145,6 @@ const AdminDashboard = () => {
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-
       // Update state locally to avoid refetch
       setLostReports((prev) =>
         prev.map((r) => (r._id === reportId ? { ...r, status: newStatus } : r))
@@ -252,27 +253,20 @@ const AdminDashboard = () => {
         {driverInfo && (
           <div className="driver-info">
             <h3>Driver Information</h3>
-            <p>
-              <strong>Name:</strong> {driverInfo.fullName}
-            </p>
-            <p>
-              <strong>Email:</strong> {driverInfo.email}
-            </p>
-            <p>
-              <strong>Phone:</strong> {driverInfo.phoneNumber}
-            </p>
-            <p>
-              <strong>Taxi ID:</strong> {driverInfo.taxiId}
-            </p>
+            <p><strong>Name:</strong> {driverInfo.fullName}</p>
+            <p><strong>Email:</strong> {driverInfo.email}</p>
+            <p><strong>Phone:</strong> {driverInfo.phoneNumber}</p>
+            <p><strong>Taxi ID:</strong> {driverInfo.taxiId}</p>
             <p>
               <strong>Vehicle:</strong> {driverInfo.vehicleModel} (
               {driverInfo.vehiclePlate})
             </p>
+            <p><strong>License:</strong> {driverInfo.licenseNumber}</p>
             <p>
-              <strong>License:</strong> {driverInfo.licenseNumber}
-            </p>
-            <p>
-              <strong>Reports:</strong> {driverInfo.foundItems.length}
+              <strong>Reports:</strong>{" "}
+              {Array.isArray(driverInfo.foundItems)
+                ? driverInfo.foundItems.length
+                : 0}
             </p>
           </div>
         )}
@@ -300,12 +294,12 @@ const AdminDashboard = () => {
 
         {banMessage && <p className="ban-message">{banMessage}</p>}
 
-        {/* Confirmation modal */}
         {showConfirmBan && (
           <div className="confirm-modal">
             <p>
-              Are you sure you want to ban driver <strong>{taxiIdToBan}</strong>{" "}
-              for reason: "{banReason || "No reason provided"}"?
+              Are you sure you want to ban driver{" "}
+              <strong>{taxiIdToBan}</strong> for reason: "
+              {banReason || "No reason provided"}"?
             </p>
             <button onClick={handleBanDriver} className="ban-button">
               Confirm Ban
@@ -344,7 +338,6 @@ const AdminDashboard = () => {
                       ? new Date(driver.banDate).toLocaleString()
                       : "N/A"}
                   </td>
-
                   <td>
                     <button onClick={() => handleUnbanDriver(driver.taxiId)}>
                       Unban

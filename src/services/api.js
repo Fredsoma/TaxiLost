@@ -1,3 +1,4 @@
+// services/api.js
 const API_URL = "https://taxilost-backend.onrender.com/auth";
 
 export const loginUser = async ({ email, password, role }) => {
@@ -6,21 +7,13 @@ export const loginUser = async ({ email, password, role }) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, role }),
   });
-  const data = await response.json();
 
+  const data = await response.json();
   if (!response.ok) {
-    // Normalize any error payload into an array of messages
-    const errs = Array.isArray(data.errors)
-      ? data.errors
-      : data.error
-      ? [data.error]
-      : data.message
-      ? [data.message]
-      : ['Login failed'];
-    throw errs;   // throws string[]
+    throw new Error(data.error || 'Login failed');
   }
 
-  return data;   // { token, role, … }
+  return data;
 };
 
 export const registerUser = async (userData) => {
@@ -29,16 +22,11 @@ export const registerUser = async (userData) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
   });
-  const data = await res.json();
 
+  const data = await res.json();
   if (!res.ok) {
-    const errs = Array.isArray(data.errors)
-      ? data.errors
-      : data.error
-      ? [data.error]
-      : ['Registration failed'];
-    throw errs;   // throws string[]
+    throw new Error(data.error || 'Registration failed');
   }
 
-  return data;   // { token, role, taxiId, … }
+  return data;
 };

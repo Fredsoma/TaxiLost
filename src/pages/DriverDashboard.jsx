@@ -1,8 +1,9 @@
+// DriverDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './DriverDashboard.css'; 
+import './DriverDashboard.css';
 
 const DriverDashboard = () => {
   const [driver, setDriver] = useState(null);
@@ -15,7 +16,12 @@ const DriverDashboard = () => {
       const res = await axios.get('/api/taxidriver/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setDriver(res.data);
+      // normalize foundItems to array
+      const data = {
+        ...res.data,
+        foundItems: Array.isArray(res.data.foundItems) ? res.data.foundItems : []
+      };
+      setDriver(data);
     };
     fetchDriver();
   }, []);
@@ -27,16 +33,17 @@ const DriverDashboard = () => {
       const res = await axios.post(
         '/api/taxidriver/report-found-item',
         { description: foundItem },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       setSubmittedReport(res.data);
-const updatedDriver = await axios.get('/api/taxidriver/me', {
-  headers: { Authorization: `Bearer ${token}` },
-});
-setDriver(updatedDriver.data);
 
+      const updated = await axios.get('/api/taxidriver/me', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDriver({
+        ...updated.data,
+        foundItems: Array.isArray(updated.data.foundItems) ? updated.data.foundItems : []
+      });
       setFoundItem('');
     } catch (err) {
       console.error('Error submitting report:', err);
@@ -57,13 +64,11 @@ setDriver(updatedDriver.data);
 
   return (
     <div className="driver-dashboard-container">
-      {/* Navbar */}
       <nav className="dashboard-navbar">
         <h2>🚖 PMAD FindMe - Driver Dashboard</h2>
         <Link to="/update-profile" className="nav-link">Update Profile</Link>
       </nav>
 
-      {/* Main content */}
       <div className="driver-info-card">
         <h1>Welcome, {driver.fullName}</h1>
         <p><strong>Taxi ID:</strong> {driver.taxiId}</p>
@@ -93,18 +98,17 @@ setDriver(updatedDriver.data);
             </div>
           )}
         </div>
-        {/* List of previously submitted reports */}
-{driver.foundItems && driver.foundItems.length > 0 && (
-  <div className="previous-reports">
-    <h3>📦 Items You've Reported:</h3>
-    <ul>
-      {driver.foundItems.map((item) => (
-        <li key={item._id}>{item.description}</li>
-      ))}
-    </ul>
-  </div>
-)}
 
+        {driver.foundItems.length > 0 && (
+          <div className="previous-reports">
+            <h3>📦 Items You've Reported:</h3>
+            <ul>
+              {driver.foundItems.map((item) => (
+                <li key={item._id}>{item.description}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
