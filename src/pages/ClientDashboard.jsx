@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import QRScanner from "../components/QRScanner";
 import "./ClientDashboard.css";
+import { API_URL } from "../services/api";  // ← import your backend base URL
 
 const ClientDashboard = () => {
   const [client, setClient] = useState(null);
@@ -19,7 +20,7 @@ const ClientDashboard = () => {
 
   const fetchProfile = async () => {
     const token = localStorage.getItem("token");
-    const res = await axios.get("/api/client/me", {
+    const res = await axios.get(`${API_URL}/client/me`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setClient(res.data);
@@ -27,7 +28,7 @@ const ClientDashboard = () => {
 
   const fetchReports = async () => {
     const token = localStorage.getItem("token");
-    const res = await axios.get("/api/client/lost-reports", {
+    const res = await axios.get(`${API_URL}/client/lost-reports`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     // normalize to array
@@ -41,7 +42,7 @@ const ClientDashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "/api/client/lost-report",
+        `${API_URL}/client/lost-report`,
         { description, taxiId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -82,10 +83,7 @@ const ClientDashboard = () => {
             onChange={(e) => setTaxiId(e.target.value)}
           />
 
-          <button
-            type="button"
-            onClick={() => setScanning((prev) => !prev)}
-          >
+          <button type="button" onClick={() => setScanning((prev) => !prev)}>
             {scanning ? "Stop Scanner" : "Start Scanner"}
           </button>
 
@@ -98,7 +96,9 @@ const ClientDashboard = () => {
             />
           )}
 
-          <button type="submit" className="position">Submit Report</button>
+          <button type="submit" className="position">
+            Submit Report
+          </button>
         </form>
         {message && <p className="message">{message}</p>}
       </div>

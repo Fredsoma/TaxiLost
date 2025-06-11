@@ -4,6 +4,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import './DriverDashboard.css';
+import { API_URL } from '../services/api';        // ← import your backend base URL
 
 const DriverDashboard = () => {
   const [driver, setDriver] = useState(null);
@@ -13,15 +14,13 @@ const DriverDashboard = () => {
   useEffect(() => {
     const fetchDriver = async () => {
       const token = localStorage.getItem('token');
-      const res = await axios.get('/api/taxidriver/me', {
+      const res = await axios.get(`${API_URL}/taxidriver/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // normalize foundItems to array
-      const data = {
+      setDriver({
         ...res.data,
-        foundItems: Array.isArray(res.data.foundItems) ? res.data.foundItems : []
-      };
-      setDriver(data);
+        foundItems: Array.isArray(res.data.foundItems) ? res.data.foundItems : [],
+      });
     };
     fetchDriver();
   }, []);
@@ -31,18 +30,18 @@ const DriverDashboard = () => {
     try {
       const token = localStorage.getItem('token');
       const res = await axios.post(
-        '/api/taxidriver/report-found-item',
+        `${API_URL}/taxidriver/report-found-item`,     // ← point at the real backend
         { description: foundItem },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSubmittedReport(res.data);
 
-      const updated = await axios.get('/api/taxidriver/me', {
+      const updated = await axios.get(`${API_URL}/taxidriver/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDriver({
         ...updated.data,
-        foundItems: Array.isArray(updated.data.foundItems) ? updated.data.foundItems : []
+        foundItems: Array.isArray(updated.data.foundItems) ? updated.data.foundItems : [],
       });
       setFoundItem('');
     } catch (err) {

@@ -1,5 +1,6 @@
 // services/api.js
-const API_URL = "https://taxilost-backend.onrender.com/auth";
+
+export const API_URL = "https://taxilost-backend.onrender.com/auth";
 
 export const loginUser = async ({ email, password, role }) => {
   const response = await fetch(`${API_URL}/login`, {

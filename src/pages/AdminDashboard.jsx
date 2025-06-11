@@ -1,6 +1,8 @@
+// AdminDashboard.jsx
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./AdminDashboard.css";
+import { API_URL } from "../services/api";  // ← import your backend base URL
 
 const AdminDashboard = () => {
   // Existing states
@@ -25,7 +27,6 @@ const AdminDashboard = () => {
   const [driverInfo, setDriverInfo] = useState(null);
   const [driverError, setDriverError] = useState("");
 
-  // Fetch found and lost reports + banned drivers on mount
   useEffect(() => {
     fetchFoundReports();
     fetchLostReports();
@@ -35,10 +36,9 @@ const AdminDashboard = () => {
   const fetchFoundReports = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/api/admin/found-reports", {
+      const res = await axios.get(`${API_URL}/admin/found-reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // normalize to array
       setReports(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading found reports", err);
@@ -50,10 +50,9 @@ const AdminDashboard = () => {
   const fetchLostReports = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/api/admin/lost-reports", {
+      const res = await axios.get(`${API_URL}/admin/lost-reports`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // normalize to array
       setLostReports(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error loading lost reports", err);
@@ -65,17 +64,15 @@ const AdminDashboard = () => {
   const fetchBannedDrivers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/api/admin/banned-drivers", {
+      const res = await axios.get(`${API_URL}/admin/banned-drivers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      // normalize to array
       setBannedDrivers(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Failed to fetch banned drivers", err);
     }
   };
 
-  // Ban confirmation trigger
   const confirmBan = () => {
     if (!taxiIdToBan.trim()) {
       alert("Please enter Taxi ID.");
@@ -84,12 +81,11 @@ const AdminDashboard = () => {
     setShowConfirmBan(true);
   };
 
-  // Ban driver request
   const handleBanDriver = async () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `/api/admin/ban-driver/${taxiIdToBan}`,
+        `${API_URL}/admin/ban-driver/${taxiIdToBan}`,
         { reason: banReason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -103,13 +99,12 @@ const AdminDashboard = () => {
     }
   };
 
-  // Unban driver request
   const handleUnbanDriver = async (taxiId) => {
     if (!window.confirm(`Unban driver ${taxiId}?`)) return;
     try {
       const token = localStorage.getItem("token");
       const res = await axios.patch(
-        `/api/admin/unban-driver/${taxiId}`,
+        `${API_URL}/admin/unban-driver/${taxiId}`,
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -120,12 +115,11 @@ const AdminDashboard = () => {
     }
   };
 
-  // Driver lookup 
   const handleSearchDriver = async () => {
     try {
       setDriverError("");
       const token = localStorage.getItem("token");
-      const res = await axios.get(`/api/admin/driver/${taxiIdInput}`, {
+      const res = await axios.get(`${API_URL}/admin/driver/${taxiIdInput}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setDriverInfo(res.data);
@@ -136,18 +130,18 @@ const AdminDashboard = () => {
     }
   };
 
-  // Update lost report status (e.g. mark as Found)
   const updateReportStatus = async (reportId, newStatus) => {
     try {
       const token = localStorage.getItem("token");
       await axios.patch(
-        `/api/admin/update-report-status/${reportId}`,
+        `${API_URL}/admin/update-report-status/${reportId}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // Update state locally to avoid refetch
       setLostReports((prev) =>
-        prev.map((r) => (r._id === reportId ? { ...r, status: newStatus } : r))
+        prev.map((r) =>
+          r._id === reportId ? { ...r, status: newStatus } : r
+        )
       );
     } catch (err) {
       alert("Failed to update report status.");
@@ -219,14 +213,17 @@ const AdminDashboard = () => {
                   <td>{report.status || "Lost"}</td>
                   <td>{new Date(report.createdAt).toLocaleString()}</td>
                   <td>
-                    {report.status !== "Found" && (
+                    {report.status !== "Found" ? (
                       <button
-                        onClick={() => updateReportStatus(report._id, "Found")}
+                        onClick={() =>
+                          updateReportStatus(report._id, "Found")
+                        }
                       >
                         Mark as Found
                       </button>
+                    ) : (
+                      <span>Found</span>
                     )}
-                    {report.status === "Found" && <span>Found</span>}
                   </td>
                 </tr>
               ))}
@@ -237,7 +234,6 @@ const AdminDashboard = () => {
 
       <hr />
 
-      {/* Driver lookup */}
       <div className="driver-lookup">
         <h2>🔍 Find Driver by Taxi ID</h2>
         <input
@@ -253,15 +249,25 @@ const AdminDashboard = () => {
         {driverInfo && (
           <div className="driver-info">
             <h3>Driver Information</h3>
-            <p><strong>Name:</strong> {driverInfo.fullName}</p>
-            <p><strong>Email:</strong> {driverInfo.email}</p>
-            <p><strong>Phone:</strong> {driverInfo.phoneNumber}</p>
-            <p><strong>Taxi ID:</strong> {driverInfo.taxiId}</p>
+            <p>
+              <strong>Name:</strong> {driverInfo.fullName}
+            </p>
+            <p>
+              <strong>Email:</strong> {driverInfo.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {driverInfo.phoneNumber}
+            </p>
+            <p>
+              <strong>Taxi ID:</strong> {driverInfo.taxiId}
+            </p>
             <p>
               <strong>Vehicle:</strong> {driverInfo.vehicleModel} (
               {driverInfo.vehiclePlate})
             </p>
-            <p><strong>License:</strong> {driverInfo.licenseNumber}</p>
+            <p>
+              <strong>License:</strong> {driverInfo.licenseNumber}
+            </p>
             <p>
               <strong>Reports:</strong>{" "}
               {Array.isArray(driverInfo.foundItems)
@@ -274,7 +280,6 @@ const AdminDashboard = () => {
 
       <hr />
 
-      {/* Ban driver section */}
       <div className="ban-driver-section">
         <h2>🚫 Ban a Taxi Driver</h2>
         <input
@@ -311,7 +316,6 @@ const AdminDashboard = () => {
 
       <hr />
 
-      {/* Banned drivers list */}
       <div className="banned-drivers-section">
         <h2>🚫 Banned Drivers</h2>
         {bannedDrivers.length === 0 ? (
@@ -339,7 +343,9 @@ const AdminDashboard = () => {
                       : "N/A"}
                   </td>
                   <td>
-                    <button onClick={() => handleUnbanDriver(driver.taxiId)}>
+                    <button
+                      onClick={() => handleUnbanDriver(driver.taxiId)}
+                    >
                       Unban
                     </button>
                   </td>

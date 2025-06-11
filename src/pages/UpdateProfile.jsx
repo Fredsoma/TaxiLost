@@ -1,7 +1,9 @@
+// UpdateProfile.jsx
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import './UpdateProfile.css'; 
+import './UpdateProfile.css';
+import { API_URL } from '../services/api';  // ← import your backend base URL
 
 const UpdateProfile = () => {
   const navigate = useNavigate();
@@ -17,7 +19,7 @@ const UpdateProfile = () => {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('/api/taxidriver/me', {
+        const res = await axios.get(`${API_URL}/taxidriver/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData(res.data);
@@ -37,7 +39,7 @@ const UpdateProfile = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put('/api/taxidriver/update', formData, {
+      await axios.put(`${API_URL}/taxidriver/update`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       alert('✅ Profile updated!');
@@ -52,11 +54,36 @@ const UpdateProfile = () => {
     <div className="update-profile-container">
       <h2>📝 Update Your Profile</h2>
       <form onSubmit={handleSubmit}>
-        <input name="fullName" value={formData.fullName} onChange={handleChange} placeholder="Full Name" />
-        <input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} placeholder="Phone Number" />
-        <input name="vehiclePlate" value={formData.vehiclePlate} onChange={handleChange} placeholder="Vehicle Plate" />
-        <input name="vehicleModel" value={formData.vehicleModel} onChange={handleChange} placeholder="Vehicle Model" />
-        <input name="licenseNumber" value={formData.licenseNumber} onChange={handleChange} placeholder="License Number" />
+        <input
+          name="fullName"
+          value={formData.fullName}
+          onChange={handleChange}
+          placeholder="Full Name"
+        />
+        <input
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          placeholder="Phone Number"
+        />
+        <input
+          name="vehiclePlate"
+          value={formData.vehiclePlate}
+          onChange={handleChange}
+          placeholder="Vehicle Plate"
+        />
+        <input
+          name="vehicleModel"
+          value={formData.vehicleModel}
+          onChange={handleChange}
+          placeholder="Vehicle Model"
+        />
+        <input
+          name="licenseNumber"
+          value={formData.licenseNumber}
+          onChange={handleChange}
+          placeholder="License Number"
+        />
         <button type="submit">Save Changes</button>
       </form>
     </div>
