@@ -7,7 +7,7 @@ const AdminDashboard = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Lost reports states
+  //  lost reports states
   const [lostReports, setLostReports] = useState([]);
   const [lostReportsLoading, setLostReportsLoading] = useState(true);
 
@@ -25,6 +25,7 @@ const AdminDashboard = () => {
   const [driverInfo, setDriverInfo] = useState(null);
   const [driverError, setDriverError] = useState("");
 
+  // Fetch found and lost reports + banned drivers on mount
   useEffect(() => {
     fetchFoundReports();
     fetchLostReports();
@@ -37,10 +38,9 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/found-reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setReports(Array.isArray(res.data) ? res.data : []);
+      setReports(res.data);
     } catch (err) {
       console.error("Error loading found reports", err);
-      setReports([]);
     } finally {
       setLoading(false);
     }
@@ -52,10 +52,9 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/lost-reports", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setLostReports(Array.isArray(res.data) ? res.data : []);
+      setLostReports(res.data);
     } catch (err) {
       console.error("Error loading lost reports", err);
-      setLostReports([]);
     } finally {
       setLostReportsLoading(false);
     }
@@ -67,10 +66,9 @@ const AdminDashboard = () => {
       const res = await axios.get("/api/admin/banned-drivers", {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setBannedDrivers(Array.isArray(res.data) ? res.data : []);
+      setBannedDrivers(res.data);
     } catch (err) {
       console.error("Failed to fetch banned drivers", err);
-      setBannedDrivers([]);
     }
   };
 
@@ -92,14 +90,13 @@ const AdminDashboard = () => {
         { reason: banReason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setBanMessage(res.data.message || "Driver banned successfully.");
+      setBanMessage(res.data.message);
       setShowConfirmBan(false);
       setBanReason("");
       setTaxiIdToBan("");
       fetchBannedDrivers();
     } catch (err) {
       setBanMessage(err.response?.data?.error || "Error banning driver");
-      console.error("Ban driver error:", err);
     }
   };
 
@@ -114,21 +111,15 @@ const AdminDashboard = () => {
         {},
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      alert(res.data.message || "Driver unbanned successfully.");
+      alert(res.data.message);
       fetchBannedDrivers();
     } catch (err) {
       alert(err.response?.data?.error || "Error unbanning driver");
-      console.error("Unban driver error:", err);
     }
   };
 
-  // Driver lookup
+  // Driver lookup 
   const handleSearchDriver = async () => {
-    if (!taxiIdInput.trim()) {
-      setDriverError("Please enter a Taxi ID.");
-      setDriverInfo(null);
-      return;
-    }
     try {
       setDriverError("");
       const token = localStorage.getItem("token");
@@ -185,15 +176,11 @@ const AdminDashboard = () => {
           <tbody>
             {reports.map((report) => (
               <tr key={report._id}>
-                <td>{report.driver?.fullName || "N/A"}</td>
-                <td>{report.driver?.email || "N/A"}</td>
-                <td>{report.driver?.taxiId || "N/A"}</td>
-                <td>{report.description || "N/A"}</td>
-                <td>
-                  {report.date && !isNaN(new Date(report.date))
-                    ? new Date(report.date).toLocaleString()
-                    : "N/A"}
-                </td>
+                <td>{report.driver?.fullName}</td>
+                <td>{report.driver?.email}</td>
+                <td>{report.driver?.taxiId}</td>
+                <td>{report.description}</td>
+                <td>{new Date(report.date).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -226,22 +213,19 @@ const AdminDashboard = () => {
                 <tr key={report._id}>
                   <td>{report.user?.fullName || "N/A"}</td>
                   <td>{report.user?.email || "N/A"}</td>
-                  <td>{report.description || "N/A"}</td>
+                  <td>{report.description}</td>
                   <td>{report.taxiId || "N/A"}</td>
                   <td>{report.status || "Lost"}</td>
+                  <td>{new Date(report.createdAt).toLocaleString()}</td>
                   <td>
-                    {report.createdAt && !isNaN(new Date(report.createdAt))
-                      ? new Date(report.createdAt).toLocaleString()
-                      : "N/A"}
-                  </td>
-                  <td>
-                    {report.status !== "Found" ? (
-                      <button onClick={() => updateReportStatus(report._id, "Found")}>
+                    {report.status !== "Found" && (
+                      <button
+                        onClick={() => updateReportStatus(report._id, "Found")}
+                      >
                         Mark as Found
                       </button>
-                    ) : (
-                      <span>Found</span>
                     )}
+                    {report.status === "Found" && <span>Found</span>}
                   </td>
                 </tr>
               ))}
@@ -288,7 +272,7 @@ const AdminDashboard = () => {
               <strong>License:</strong> {driverInfo.licenseNumber}
             </p>
             <p>
-              <strong>Reports:</strong> {Array.isArray(driverInfo.foundItems) ? driverInfo.foundItems.length : 0}
+              <strong>Reports:</strong> {driverInfo.foundItems.length}
             </p>
           </div>
         )}
@@ -360,6 +344,7 @@ const AdminDashboard = () => {
                       ? new Date(driver.banDate).toLocaleString()
                       : "N/A"}
                   </td>
+
                   <td>
                     <button onClick={() => handleUnbanDriver(driver.taxiId)}>
                       Unban
