@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { registerUser } from '../services/api';
 import './register.css';
 import taxilost from '../assets/taxi-logo.png';
@@ -11,34 +10,31 @@ const RegisterPage = () => {
     fullName: '',
     email: '',
     password: '',
-    phoneNumber: '',      
-    // driver-only
+    phoneNumber: '',
     licenseNumber: '',
     plateNumber: '',
     vehicleModel: '',
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState([]); // fixed
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
-    setError('');
+    setError([]);
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
-   
     const payload = {
       role,
       fullName: form.fullName,
       email: form.email,
       password: form.password,
       phoneNumber: form.phoneNumber,
-      // Only include these if role === 'taxidriver'
       ...(role === 'taxidriver' && {
         licenseNumber: form.licenseNumber,
         plateNumber: form.plateNumber,
@@ -48,18 +44,17 @@ const RegisterPage = () => {
 
     try {
       const response = await registerUser(payload);
-    if (response.token) {
-  
-  navigate('/login'); 
-}
- else {
-        setError(response.error || 'Registration failed');
+      if (response.token) {
+        navigate('/login');
+      } else {
+        setError([response.error || 'Registration failed']);
       }
     } catch (err) {
       console.error('Register error:', err);
-     const messages = Array.isArray(err) ? err : [err.message || 'Registration failed'];
-setError(messages);
-
+      const messages = Array.isArray(err)
+        ? err
+        : [err?.message || err?.toString() || 'Registration failed'];
+      setError(messages);
     } finally {
       setIsLoading(false);
     }
@@ -96,83 +91,26 @@ setError(messages);
         </div>
 
         <form onSubmit={handleRegister} className="register-form">
-          <input
-            type="text"
-            name="fullName"
-            placeholder="Full Name"
-            value={form.fullName}
-            onChange={handleChange}
-            required
-            className="register-input"
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email Address"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="register-input"
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            className="register-input"
-          />
-
-          <input
-            type="tel"
-            name="phoneNumber"        
-            placeholder="Phone Number"
-            value={form.phoneNumber}
-            onChange={handleChange}
-            required
-            className="register-input"
-          />
+          <input type="text" name="fullName" placeholder="Full Name" value={form.fullName} onChange={handleChange} required className="register-input" />
+          <input type="email" name="email" placeholder="Email Address" value={form.email} onChange={handleChange} required className="register-input" />
+          <input type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required className="register-input" />
+          <input type="tel" name="phoneNumber" placeholder="Phone Number" value={form.phoneNumber} onChange={handleChange} required className="register-input" />
 
           {role === 'taxidriver' && (
             <>
-              <input
-                type="text"
-                name="licenseNumber"
-                placeholder="Driver’s License No."
-                value={form.licenseNumber}
-                onChange={handleChange}
-                required
-                className="register-input"
-              />
-              <input
-                type="text"
-                name="plateNumber"
-                placeholder="Vehicle Plate Number"
-                value={form.plateNumber}
-                onChange={handleChange}
-                required
-                className="register-input"
-              />
-              <input
-                type="text"
-                name="vehicleModel"
-                placeholder="Vehicle Model"
-                value={form.vehicleModel}
-                onChange={handleChange}
-                required
-                className="register-input"
-              />
+              <input type="text" name="licenseNumber" placeholder="Driver’s License No." value={form.licenseNumber} onChange={handleChange} required className="register-input" />
+              <input type="text" name="plateNumber" placeholder="Vehicle Plate Number" value={form.plateNumber} onChange={handleChange} required className="register-input" />
+              <input type="text" name="vehicleModel" placeholder="Vehicle Model" value={form.vehicleModel} onChange={handleChange} required className="register-input" />
             </>
           )}
 
-          {Array.isArray(error)
-  ? error.map((msg, i) => <p key={i} className="register-error">{msg}</p>)
-  : <p className="register-error">{error}</p>
-}
-
+          {error.length > 0 && (
+            <div className="error-container">
+              {error.map((msg, i) => (
+                <p key={i} className="register-error">{msg}</p>
+              ))}
+            </div>
+          )}
 
           <button type="submit" className="register-button" disabled={isLoading}>
             {isLoading
@@ -185,9 +123,9 @@ setError(messages);
 
         <p className="register-footer">
           Already registered?{' '}
-          <a href="/login" className="register-link">
+          <Link to="/login" className="register-link">
             Login here
-          </a>
+          </Link>
         </p>
       </div>
     </div>
