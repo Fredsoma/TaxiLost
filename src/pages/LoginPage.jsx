@@ -42,11 +42,11 @@ const LoginPage = () => {
 }
 
     } catch (err) {
-      console.error('Login error:', err);
-      setError(err.message || 'Login failed');
-    } finally {
-      setIsLoading(false);
-    }
+  console.error('Login error:', err);
+  const messages = Array.isArray(err) ? err : [err.message || 'Login failed'];
+  setError(messages);
+}
+
   };
 
   return (
@@ -113,7 +113,11 @@ const LoginPage = () => {
             className="login-input"
           />
 
-          {error && <p className="login-error">{error}</p>}
+          {Array.isArray(error)
+  ? error.map((msg, i) => <p key={i} className="login-error">{msg}</p>)
+  : <p className="login-error">{error}</p>
+}
+
 
          <button type="submit" className="login-button" disabled={isLoading}>
   {isLoading

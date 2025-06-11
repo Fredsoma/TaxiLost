@@ -57,7 +57,9 @@ const RegisterPage = () => {
       }
     } catch (err) {
       console.error('Register error:', err);
-      setError('Server error');
+     const messages = Array.isArray(err) ? err : [err.message || 'Registration failed'];
+setError(messages);
+
     } finally {
       setIsLoading(false);
     }
@@ -166,7 +168,11 @@ const RegisterPage = () => {
             </>
           )}
 
-          {error && <p className="register-error">{error}</p>}
+          {Array.isArray(error)
+  ? error.map((msg, i) => <p key={i} className="register-error">{msg}</p>)
+  : <p className="register-error">{error}</p>
+}
+
 
           <button type="submit" className="register-button" disabled={isLoading}>
             {isLoading
