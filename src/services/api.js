@@ -6,18 +6,22 @@ export const loginUser = async ({ email, password, role }) => {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password, role }),
   });
+  const data = await response.json();
 
-   const data = await response.json();
- if (!response.ok) {
+  if (!response.ok) {
    
-    throw new Error(data.error || 'Login failed');
+    const errs = Array.isArray(data.errors)
+      ? data.errors
+      : data.error
+      ? [data.error]
+      : data.message
+      ? [data.message]
+      : ['Login failed'];
+    throw errs;  
   }
 
-  return data;
+  return data;  
 };
-
-
-
 
 export const registerUser = async (userData) => {
   const res = await fetch(`${API_URL}/register`, {
@@ -25,13 +29,16 @@ export const registerUser = async (userData) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(userData),
   });
-
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || 'Registration failed');
+    const errs = Array.isArray(data.errors)
+      ? data.errors
+      : data.error
+      ? [data.error]
+      : ['Registration failed'];
+    throw errs;  
   }
 
-  return data;
+  return data;   
 };
-
