@@ -9,7 +9,7 @@ const LoginPage = () => {
   const [role, setRole] = useState('client');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState([]); // fixed
+  const [error, setError] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
@@ -45,6 +45,8 @@ const LoginPage = () => {
         ? err
         : [err?.message || err?.toString() || 'Login failed'];
       setError(messages);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -112,13 +114,11 @@ const LoginPage = () => {
             className="login-input"
           />
 
-          {error.length > 0 && (
-            <div className="error-container">
-              {error.map((msg, i) => (
-                <p key={i} className="login-error">{msg}</p>
-              ))}
-            </div>
-          )}
+          {(Array.isArray(error) ? error : [error])
+            .filter(Boolean)
+            .map((msg, i) => (
+              <p key={i} className="login-error">{msg}</p>
+            ))}
 
           <button type="submit" className="login-button" disabled={isLoading}>
             {isLoading

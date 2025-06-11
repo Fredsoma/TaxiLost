@@ -15,7 +15,7 @@ const RegisterPage = () => {
     plateNumber: '',
     vehicleModel: '',
   });
-  const [error, setError] = useState([]); // fixed
+  const [error, setError] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
@@ -104,20 +104,18 @@ const RegisterPage = () => {
             </>
           )}
 
-          {error.length > 0 && (
-            <div className="error-container">
-              {error.map((msg, i) => (
-                <p key={i} className="register-error">{msg}</p>
-              ))}
-            </div>
-          )}
+          {(Array.isArray(error) ? error : [error])
+            .filter(Boolean)
+            .map((msg, i) => (
+              <p key={i} className="register-error">{msg}</p>
+            ))}
 
           <button type="submit" className="register-button" disabled={isLoading}>
             {isLoading
               ? 'Creating account…'
               : role === 'client'
-                ? 'Register as Client'
-                : 'Register as Driver'}
+              ? 'Register as Client'
+              : 'Register as Driver'}
           </button>
         </form>
 
