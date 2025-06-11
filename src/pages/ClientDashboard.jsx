@@ -9,7 +9,7 @@ const ClientDashboard = () => {
   const [description, setDescription] = useState("");
   const [taxiId, setTaxiId] = useState("");
   const [message, setMessage] = useState("");
-  const [scanning, setScanning] = useState(false); 
+  const [scanning, setScanning] = useState(false);
 
   useEffect(() => {
     fetchProfile();
@@ -17,19 +17,30 @@ const ClientDashboard = () => {
   }, []);
 
   const fetchProfile = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get("/api/client/me", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setClient(res.data);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/client/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setClient(res.data);
+    } catch (error) {
+      console.error("Error fetching client profile:", error);
+    }
   };
 
   const fetchReports = async () => {
-    const token = localStorage.getItem("token");
-    const res = await axios.get("/api/client/lost-reports", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setLostReports(res.data);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get("/api/client/lost-reports", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log("Lost Reports API response:", res.data);
+      // Defensive check to ensure lostReports is always an array
+      setLostReports(Array.isArray(res.data) ? res.data : []);
+    } catch (error) {
+      console.error("Error fetching lost reports:", error);
+      setLostReports([]);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -49,6 +60,7 @@ const ClientDashboard = () => {
       fetchReports();
     } catch (err) {
       setMessage("Failed to submit report.");
+      console.error("Error submitting lost report:", err);
     }
   };
 
@@ -81,29 +93,30 @@ const ClientDashboard = () => {
           />
 
           {/* Button to toggle scanner */}
-          <button
-            type="button"
-            onClick={() => setScanning((prev) => !prev)}
-          >
+          <button type="button" onClick={() => setScanning((prev) => !prev)}>
             {scanning ? "Stop Scanner" : "Start Scanner"}
           </button>
 
           {/* Only render scanner if scanning is true */}
-          {scanning && <QRScanner onScan={(value) => {
-            setTaxiId(value);
-            setScanning(false); // stop scanning once value captured
-          }} />}
+          {scanning && (
+            <QRScanner
+              onScan={(value) => {
+                setTaxiId(value);
+                setScanning(false); // stop scanning once value captured
+              }}
+            />
+          )}
 
-          <button cltype="submit" className="position">Submit Report</button>
+          <button type="submit" className="position">
+            Submit Report
+          </button>
         </form>
         {message && <p className="message">{message}</p>}
       </div>
 
       <div className="reports-section">
         <h2>📄 My Lost Reports</h2>
-        {lostReports.length === 0 ? (
-          <p>No reports yet.</p>
-        ) : (
+        {Array.isArray(lostReports) && lostReports.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -124,6 +137,8 @@ const ClientDashboard = () => {
               ))}
             </tbody>
           </table>
+        ) : (
+          <p>No reports yet.</p>
         )}
       </div>
     </div>

@@ -2,21 +2,36 @@ import React, { useEffect, useState } from 'react';
 import { QRCodeCanvas } from 'qrcode.react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import './DriverDashboard.css'; 
+import './DriverDashboard.css';
 
 const DriverDashboard = () => {
   const [driver, setDriver] = useState(null);
   const [foundItem, setFoundItem] = useState('');
   const [submittedReport, setSubmittedReport] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchDriver = async () => {
+  const fetchDriver = async () => {
+    try {
       const token = localStorage.getItem('token');
       const res = await axios.get('/api/taxidriver/me', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setDriver(res.data);
-    };
+      // Make sure foundItems is always an array
+      setDriver({
+        ...res.data,
+        foundItems: Array.isArray(res.data.foundItems) ? res.data.foundItems : [],
+      });
+      setError(null);
+    } catch (err) {
+      console.error('Failed to fetch driver data:', err);
+      setError('Failed to load driver data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchDriver();
   }, []);
 
@@ -32,18 +47,19 @@ const DriverDashboard = () => {
         }
       );
       setSubmittedReport(res.data);
-const updatedDriver = await axios.get('/api/taxidriver/me', {
-  headers: { Authorization: `Bearer ${token}` },
-});
-setDriver(updatedDriver.data);
 
+      // Refresh driver data after submitting report
+      await fetchDriver();
       setFoundItem('');
     } catch (err) {
       console.error('Error submitting report:', err);
+      setError('Failed to submit report. Please try again.');
     }
   };
 
-  if (!driver) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="error-message">{error}</p>;
+  if (!driver) return <p>No driver data available.</p>;
 
   const qrData = {
     name: driver.fullName,
@@ -93,18 +109,20 @@ setDriver(updatedDriver.data);
             </div>
           )}
         </div>
-        {/* List of previously submitted reports */}
-{driver.foundItems && driver.foundItems.length > 0 && (
-  <div className="previous-reports">
-    <h3>📦 Items You've Reported:</h3>
-    <ul>
-      {driver.foundItems.map((item) => (
-        <li key={item._id}>{item.description}</li>
-      ))}
-    </ul>
-  </div>
-)}
 
+        {/* List of previously submitted reports */}
+        {driver.foundItems.length > 0 ? (
+          <div className="previous-reports">
+            <h3>📦 Items You've Reported:</h3>
+            <ul>
+              {driver.foundItems.map((item) => (
+                <li key={item._id}>{item.description}</li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <p>No found items reported yet.</p>
+        )}
       </div>
     </div>
   );
