@@ -1,0 +1,49 @@
+.update-profile-container {
+  max-width: 500px;
+  margin: 4rem auto;
+  padding: 2.5rem;
+  background: linear-gradient(to bottom right, #f0f4ff, #ffffff);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.update-profile-container h2 {
+  text-align: center;
+  font-size: 1.8rem;
+  color: #0d6efd;
+  margin-bottom: 2rem;
+}
+
+.update-profile-container input {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  margin-bottom: 1.2rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  transition: 0.3s ease;
+}
+
+.update-profile-container input:focus {
+  border-color: #0d6efd;
+  outline: none;
+  box-shadow: 0 0 5px rgba(13, 110, 253, 0.3);
+}
+
+.update-profile-container button {
+  width: 100%;
+  padding: 0.9rem;
+  background: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.update-profile-container button:hover {
+  background: #0b5ed7;
+}

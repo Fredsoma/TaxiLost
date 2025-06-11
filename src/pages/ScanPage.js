@@ -9,11 +9,11 @@ export default function ScanPage() {
   const [contact, setContact] = useState('');
   const [tripId, setTripId] = useState(null);
   const [timestamp, setTimestamp] = useState(null);
-  const [step, setStep] = useState(prefilledTaxiId ? 2 : 1); // If taxiId prefills, skip step 1
+  const [step, setStep] = useState(prefilledTaxiId ? 2 : 1); 
 
   const navigate = useNavigate();
 
-  // If taxiId is already in the URL (from QR scan), skip the “enter taxiId” form.
+ 
   useEffect(() => {
     if (prefilledTaxiId) {
       setTaxiId(prefilledTaxiId);
@@ -70,7 +70,7 @@ export default function ScanPage() {
   }
 
   if (step === 2) {
-    // Taxi ID was prefetched via QR; now ask for contact
+   
     return (
       <div>
         <h2>Taxi: <strong>{taxiId}</strong></h2>
@@ -95,7 +95,7 @@ export default function ScanPage() {
   }
 
   if (step === 3) {
-    // Trip registered; show link to “Report Lost Item”
+   
     return (
       <div>
         <h2>Trip Registered ✔</h2>

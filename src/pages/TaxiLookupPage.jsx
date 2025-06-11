@@ -1,4 +1,3 @@
-// client/src/pages/TaxiLookupPage.jsx
 
 import React, { useState } from 'react';
 import axios from 'axios';
@@ -46,7 +45,7 @@ export default function TaxiLookupPage() {
       <h2 className="section-title">Find Taxi</h2>
 
       <div className="lookup-grid">
-        {/* Manual entry */}
+       
         <div>
           <label>
             Enter Taxi ID
@@ -70,7 +69,7 @@ export default function TaxiLookupPage() {
           </label>
         </div>
 
-        {/* QR Scanner */}
+     
         <div>
           <label>Or Scan QR Code</label>
           <div id="qr-reader-wrapper">
@@ -79,21 +78,21 @@ export default function TaxiLookupPage() {
         </div>
       </div>
 
-      {/* Loading indicator */}
+    
       {loading && (
         <p style={{ color: 'var(--color-primary)', marginTop: '8px' }}>
           Loading…
         </p>
       )}
 
-      {/* Error or “not found” message */}
+    
       {message && (
         <p style={{ color: 'var(--color-error)', marginTop: '8px' }}>
           {message}
         </p>
       )}
 
-      {/* Driver info card */}
+     
       {driverInfo && (
         <div className="lookup-result">
           <h3>Driver Information</h3>

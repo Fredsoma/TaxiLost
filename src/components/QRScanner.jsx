@@ -1,42 +1,43 @@
-import React, { useEffect, useRef } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import React, { useEffect, useRef } from "react";
+import { Html5QrcodeScanner } from "html5-qrcode";
 
-/**
- * Props:
- *   onScanSuccess: (decodedText: string) => void
- */
-export default function QRScanner({ onScanSuccess }) {
+const QRScanner = ({ onScan }) => {
   const scannerRef = useRef(null);
 
   useEffect(() => {
-    const config = {
-      fps: 10,
-      qrbox: { width: 250, height: 250 },
-    };
-
     const scanner = new Html5QrcodeScanner(
       "qr-reader",
-      config,
-      false
-    );
-
-    scanner.render(
-      (decodedText, decodedResult) => {
-        if (onScanSuccess) onScanSuccess(decodedText);
+      {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        rememberLastUsedCamera: true,
+        showTorchButtonIfSupported: true,
       },
-      (errorMessage) => {
-        // ignore scan errors
-      }
+      false
     );
 
     scannerRef.current = scanner;
 
-    return () => {
-      scanner.clear().catch((error) => {
-        console.error("Failed to clear QR scanner", error);
-      });
-    };
-  }, [onScanSuccess]);
+    scanner.render(
+      (decodedText, decodedResult) => {
+        onScan(decodedText);
+        
+        scanner.clear().catch((e) => console.error("Failed to clear scanner", e));
+      },
+      (errorMessage) => {
+       
+      }
+    );
 
-  return <div id="qr-reader" style={{ width: "100%" }} />;
-}
+    return () => {
+     
+      if (scannerRef.current) {
+        scannerRef.current.clear().catch((e) => console.error("Failed to clear scanner", e));
+      }
+    };
+  }, [onScan]);
+
+  return <div id="qr-reader" style={{ width: "100%", marginTop: "10px" }}></div>;
+};
+
+export default QRScanner;

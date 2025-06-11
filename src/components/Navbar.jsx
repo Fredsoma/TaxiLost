@@ -1,70 +1,42 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import "./Navbar.css"; 
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const { logout } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="logo flex items-center">
-          <img
-            src="/taxi-logo.png"
-            alt="TaxiLost Logo"
-            style={{ height: "50px", marginRight: "8px" }}
-          />
+        <Link className="logo">
+          <img src="/taxi-logo.png" alt="TaxiLost Logo" className="logo logo-image" />
           TaxiLost
         </Link>
 
-        <div className="nav-links">
-          <Link to="/" className="nav-link">
-            Home
-          </Link>
-          <Link to="/taxi-lookup" className="nav-link">
-            Find Taxi
-          </Link>
-          <Link to="/register-taxi" className="nav-link">
-            Register Taxi
-          </Link>
-          <Link to="/about" className="nav-link">
-            About
-          </Link>
+        <div className="nav-links desktop-only">
+          <button className="logout-button" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
 
-        <button
-          className="hamburger"
-          onClick={() => setMenuOpen((prev) => !prev)}
-        >
-          &#9776;
+        <button className="hamburger mobile-only" onClick={() => setMenuOpen(!menuOpen)}>
+          ☰
         </button>
       </div>
 
       {menuOpen && (
         <div className="mobile-menu">
-          <Link to="/" className="nav-link" onClick={() => setMenuOpen(false)}>
-            Home
-          </Link>
-          <Link
-            to="/taxi-lookup"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            Find Taxi
-          </Link>
-          <Link
-            to="/register-taxi"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            Register Taxi
-          </Link>
-          <Link
-            to="/about"
-            className="nav-link"
-            onClick={() => setMenuOpen(false)}
-          >
-            About
-          </Link>
+          <button className="logout-button mobile-logout" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       )}
     </nav>

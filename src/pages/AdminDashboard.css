@@ -1,0 +1,272 @@
+.admin-dashboard {
+  padding: 24px;
+  background-color: #f9f9f9;
+}
+
+.admin-dashboard h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* REPORT TABLE */
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+#report2{
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+  display: block;
+}
+
+.report-table th,
+.report-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: left;
+  white-space: nowrap; 
+}
+
+.report-table th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.report-table tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* DRIVER LOOKUP */
+.driver-lookup {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: #f6f8fa;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  max-width: 500px;
+}
+
+.driver-lookup h2 {
+  font-size: 1.5em;
+  margin-bottom: 15px;
+}
+
+.driver-lookup input {
+  width: 70%;
+  padding: 8px;
+  margin-right: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.driver-lookup button {
+  padding: 8px 16px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.driver-lookup button:hover {
+  background-color: #0056b3;
+}
+
+/* DRIVER INFO */
+.driver-info {
+  margin-top: 20px;
+  background-color: #fff;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+.driver-info p {
+  margin: 8px 0;
+}
+
+/* BAN BUTTON */
+.ban-button {
+  background-color: #d32f2f;
+  color: white;
+  padding: 8px 16px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ban-button:hover {
+  background-color: #b71c1c;
+}
+
+.ban-message {
+  margin-top: 10px;
+  color: green;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
+}
+
+/* MODAL */
+.confirm-modal {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  background: white;
+  border-radius: 10px;
+  padding: 30px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirm-modal p {
+  margin-bottom: 20px;
+  font-size: 1.1em;
+}
+
+.confirm-modal button {
+  margin: 0 10px;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.confirm-modal .ban-button {
+  background-color: #d32f2f;
+  color: white;
+}
+
+.confirm-modal button:nth-child(3) {
+  background-color: #ccc;
+}
+
+.banned-drivers-section {
+  margin-top: 40px;
+}
+
+/* ----------------- */
+/* RESPONSIVE FIXES */
+/* ----------------- */
+
+@media (max-width: 768px) {
+  .driver-lookup {
+    max-width: 100%;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .driver-lookup input {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+
+  .driver-lookup button {
+    width: 100%;
+  }
+
+  .ban-button {
+    width: 100%;
+    padding: 12px 0;
+  }
+
+  .driver-info {
+    padding: 15px;
+  }
+
+  .confirm-modal {
+    width: 90%;
+    padding: 20px;
+  }
+  .report-table {
+ display: block;
+}
+
+
+  .report-table th,
+  .report-table td {
+    padding: 8px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard {
+    padding: 12px;
+  }
+
+  .admin-dashboard h1 {
+    font-size: 1.5rem;
+  }
+
+  .report-table th,
+  .report-table td {
+    font-size: 0.9rem;
+  }
+
+  .confirm-modal {
+    padding: 15px;
+    font-size: 0.95rem;
+  }
+
+  .confirm-modal p {
+    font-size: 1rem;
+  }
+   .report-table {
+ display: block;
+}
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .report-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .report-table table {
+    width: 100%;
+    min-width: 600px; 
+  }
+
+  .report-table th,
+  .report-table td {
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  .driver-lookup {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .driver-lookup input {
+    width: 100%;
+    margin: 0 0 10px 0;
+  }
+
+  .driver-lookup button {
+    width: 100%;
+  }
+
+  .confirm-modal {
+    width: 80%;
+  }
+}
+

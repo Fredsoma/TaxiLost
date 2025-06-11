@@ -22,7 +22,7 @@ export default function HomePage() {
   const fetchReports = async () => {
     try {
       const res = await axios.get(`${API}/api/lost-reports`);
-      setReports(res.data); // res.data should be an array
+      setReports(res.data); 
     } catch (err) {
       console.error(err);
     }
